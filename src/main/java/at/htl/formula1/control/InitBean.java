@@ -9,17 +9,23 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Initialized;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonValue;
+import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.stream.Stream;
 
 @ApplicationScoped
@@ -34,7 +40,7 @@ public class InitBean {
     @Inject
     ResultsRestClient client;
 
-
+    @Transactional
     public void init(@Observes @Initialized(ApplicationScoped.class) Object init) {
 
         readTeamsAndDriversFromFile(TEAM_FILE_NAME);
@@ -49,7 +55,16 @@ public class InitBean {
      * @param racesFileName
      */
     private void readRacesFromFile(String racesFileName) {
-
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(racesFileName)));
+            br.readLine();
+            String line;
+            while ((line = br.readLine()) != null){
+                String [] row = line.split(";");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -61,7 +76,16 @@ public class InitBean {
      * @param teamFileName
      */
     private void readTeamsAndDriversFromFile(String teamFileName) {
-
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(teamFileName)));
+            br.readLine();
+            String line;
+            while ((line = br.readLine()) != null){
+                String [] row = line.split(";");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -70,7 +94,7 @@ public class InitBean {
      * Wenn es das Team schon gibt, dann liest man das Team aus der Tabelle und
      * erstellt ein Objekt (der Klasse Team).
      * Dieses Objekt wird verwendet, um die Fahrer mit Ihrem jeweiligen Team
-     * in der Tabelle F!_DRIVER zu speichern.
+     * in der Tabelle F1_DRIVER zu speichern.
      *
      * @param line String-Array mit den einzelnen Werten der csv-Datei
      */

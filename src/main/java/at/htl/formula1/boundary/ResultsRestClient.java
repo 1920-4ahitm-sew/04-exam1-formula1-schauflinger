@@ -29,13 +29,16 @@ public class ResultsRestClient {
      */
     public void readResultsFromEndpoint() {
 
-        JsonArray payload = null;
-
+        String url = "http://vm90.htl-leonding.ac.at/results";
+        Client client = ClientBuilder.newClient();
+        WebTarget target = client.target(url);
+        Response response = (Response) target.request(MediaType.APPLICATION_JSON);
+        JsonArray payload = response.readEntity(JsonArray.class);
         persistResult(payload);
     }
 
     /**
-     * Das JsonArray wird durchlaufen (iteriert). Man erhäjt dabei Objekte vom
+     * Das JsonArray wird durchlaufen (iteriert). Man erhält dabei Objekte vom
      * Typ JsonValue. diese werden mit der Methode .asJsonObject() in ein
      * JsonObject umgewandelt.
      *
@@ -55,7 +58,9 @@ public class ResultsRestClient {
      */
     @Transactional
     void persistResult(JsonArray resultsJson) {
-
+        for (JsonValue jsonValue : resultsJson){
+            JsonObject resultJson = jsonValue.asJsonObject();
+        }
     }
 
 }
