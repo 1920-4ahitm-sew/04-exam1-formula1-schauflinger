@@ -2,6 +2,7 @@ package at.htl.formula1.boundary;
 
 import at.htl.formula1.entity.Driver;
 
+import javax.ejb.Stateless;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.persistence.EntityManager;
@@ -11,7 +12,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
 
-
+@Stateless
+@Path("Result")
 public class ResultsEndpoint {
 
 
