@@ -52,13 +52,26 @@ public class InitBean {
     /**
      * Einlesen der Datei "races.csv" und Speichern der Objekte in der Tabelle F1_RACE
      *
+     */
+
+    /**
+     * Einlesen der Datei "races.csv" und Speichern der Objekte in der Tabelle F1_RACE
+     *
      * @param racesFileName
      */
     private void readRacesFromFile(String racesFileName) {
         URL url = Thread.currentThread().getContextClassLoader()
                 .getResource("races.csv");
         try (Stream stream = Files.lines(Paths.get(url.getPath()))) {
-            stream.forEach(System.out::println);
+            stream.lines()
+                    .skip(1)
+                    .map(s -> {
+                        return s.split(";");
+                    })
+                    .map(a -> {
+                        return new Entity(a[1], a[3], a[2], a[5], a[4]);
+                    })
+                    .forEach(em::merge);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -88,7 +101,7 @@ public class InitBean {
         URL url = Thread.currentThread().getContextClassLoader()
                 .getResource("teams.csv");
         try (Stream stream = Files.lines(Paths.get(url.getPath()))) {
-            stream.forEach(System.out::println);
+            stream.forEach(em::merge);
         } catch (IOException e) {
             e.printStackTrace();
         }

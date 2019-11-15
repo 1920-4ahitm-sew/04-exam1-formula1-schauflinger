@@ -7,6 +7,7 @@ import at.htl.formula1.entity.Result;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
+import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
@@ -22,6 +23,8 @@ public class ResultsRestClient {
     public static final String RESULTS_ENDPOINT = "http://vm90.htl-leonding.ac.at/results";
     private Client client;
     private WebTarget target;
+
+    EntityManager em;
 
     /**
      * Vom RestEndpoint werden alle Result abgeholt und in ein JsonArray gespeichert.
