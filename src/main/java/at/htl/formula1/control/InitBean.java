@@ -55,16 +55,24 @@ public class InitBean {
      * @param racesFileName
      */
     private void readRacesFromFile(String racesFileName) {
-        try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(racesFileName)));
-            br.readLine();
-            String line;
-            while ((line = br.readLine()) != null){
-                String [] row = line.split(";");
-            }
+        URL url = Thread.currentThread().getContextClassLoader()
+                .getResource("races.csv");
+        try (Stream stream = Files.lines(Paths.get(url.getPath()))) {
+            stream.forEach(System.out::println);
         } catch (IOException e) {
             e.printStackTrace();
         }
+//        try {
+//            BufferedReader br = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(racesFileName)));
+//            br.readLine();
+//            String line;
+//            while ((line = br.readLine()) != null){
+//                String [] row = line.split(";");
+//                System.out.println(row);
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
     }
 
@@ -76,16 +84,26 @@ public class InitBean {
      * @param teamFileName
      */
     private void readTeamsAndDriversFromFile(String teamFileName) {
-        try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(teamFileName)));
-            br.readLine();
-            String line;
-            while ((line = br.readLine()) != null){
-                String [] row = line.split(";");
-            }
+
+        URL url = Thread.currentThread().getContextClassLoader()
+                .getResource("teams.csv");
+        try (Stream stream = Files.lines(Paths.get(url.getPath()))) {
+            stream.forEach(System.out::println);
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+//        try {
+//            BufferedReader br = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(teamFileName)));
+//            br.readLine();
+//            String line;
+//            while ((line = br.readLine()) != null){
+//                String [] row = line.split(";");
+//                List<Entity> entity = this.em.createNamedQuery("Entity.findAll", Entity.class)
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
     }
 
     /**
