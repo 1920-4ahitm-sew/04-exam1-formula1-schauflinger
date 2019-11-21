@@ -1,0 +1,137 @@
+= Testverbesserung Schauflinger
+
+=== InitBean.java
+====== alte readRacesFromFile
+[source, java]
+----
+
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(racesFileName)));
+            br.readLine();
+            String line;
+            while ((line = br.readLine()) != null){
+                String [] row = line.split(";");
+                System.out.println(row);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+----
+
+====== neu
+[source,java]
+----
+        BufferedReader br = new BufferedReader(
+                new InputStreamReader(
+                        getClass()
+                                .getResourceAsStream(
+                                        "/" + racesFileName),
+                        StandardCharsets.UTF_8)
+        );
+
+        try {
+            br.readLine();
+            String line;
+            while ((line = br.readLine()) != null){
+                String [] row = line.split(";");
+                Race race = new Race(Long.parseLong(row[0]),
+                        row[1],
+                        LocalDate.parse(row[2], DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+
+                em.persist(race);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+----
+
+====== alte readTeamsAndDriversFromFile
+[source,java]
+----
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(teamFileName)));
+            br.readLine();
+            String line;
+            while ((line = br.readLine()) != null){
+                String [] row = line.split(";");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+----
+
+====== neu
+[source, java]
+----
+        BufferedReader br = new BufferedReader
+                (new InputStreamReader(
+                        getClass()
+                                .getResourceAsStream("/" + teamFileName),
+                                    StandardCharsets.UTF_8));
+
+        try {
+            br.readLine();
+            String line;
+            while ((line = br.readLine()) != null){
+                String [] row = line.split(";");
+                persistTeamAndDrivers(row);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+----
+
+====== persistTeamandDrivers
+war nicht vorhanden
+
+=== Driver.java
+Annotation @NamedQueries vergessen
+[source,java]
+----
+@NamedQueries({
+        @NamedQuery(
+                name = "Driver.findByName",
+                query = "select d from Driver d where d.name like :NAME"
+        ),
+        @NamedQuery(
+                name = "Driver.findAll",
+                query = "select d from Driver d"
+        )
+})
+----
+
+=== Result.java
+Annotation @NamedQueries vergessen
+[source,java]
+----
+@NamedQueries({
+        @NamedQuery(
+                name = "Result.getPointsSumOfDriver",
+                query = "select sum(r.points) from Result r where r.driver = (select d.id from Driver d where d.name like :NAME)"
+        ),
+        @NamedQuery(
+                name = "Result.getWinner",
+                query = "select re.driver from Result re where re.position = 1 and re.race = (select ra.id from Race ra where ra.country like :COUNTRY)"
+        ),
+        @NamedQuery(
+                name = "Result.wonRaces",
+                query = "select re.race from Result re where re.position = 1 and re.driver in (select distinct d.id from Driver d where d.team = (select t.id from Team t where t.name like :TEAMNAME))"
+        ),
+        @NamedQuery(
+                name = "Result.allPoints",
+                query = "select sum(r.points) from Result r where r.driver = :ID"
+        ),
+})
+----
+
+=== Team.java
+Annotation @NamedQueries vergessen
+[source,java]
+----
+@NamedQueries(
+        @NamedQuery(
+                name = "Team.findByName",
+                query = "select t from Team t where t.name like :NAME"
+        )
+)
+----
