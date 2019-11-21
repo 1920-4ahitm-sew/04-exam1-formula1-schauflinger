@@ -175,3 +175,72 @@ persistResult
 
         }
 ----
+
+=== ResultsEndpoint.java
+@Stateless wird nicht benötigt
+
+[source,java]
+----
+    @GET
+    public JsonObject getPointsSumOfDriver(@QueryParam("name") String name) {
+        Long points = em.createNamedQuery("Result.getPointsSumOfDriver", Long.class)
+                .setParameter("NAME", name)
+                .getSingleResult();
+
+        JsonObject jsonObject = Json.createObjectBuilder()
+                .add("driver", name)
+                .add("points", points)
+                .build();
+
+        return jsonObject;
+    }
+
+
+        @GET
+    @Path("winner/{country}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response findWinnerOfRace(@PathParam("country") String country) {
+
+        Long driverId = em.createNamedQuery("Result.getWinner", Driver.class)
+                        .setParameter("COUNTRY", country).
+                        getSingleResult().
+                        getId();
+
+        Driver winner = em.find(Driver.class, driverId);
+
+        return Response.ok(winner).build();
+    }
+----
+diese Klasse aus Zeitproblemen nicht gemacht
+
+eigene Methoden:
+[source, java]
+----
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("raceswon")
+    public List<Race> allRacesWonByTeam(@QueryParam("team") String team) {
+        List<Race> wonRaces = em.createNamedQuery("Result.wonRaces", Race.class)
+                .setParameter("TEAMNAME", team)
+                .getResultList();
+
+        return wonRaces;
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("all")
+    public List<String[]> allRacesWonByTeam() {
+        List<Driver> drivers = em.createNamedQuery("Driver.findAll", Driver.class).getResultList();
+        List<String[]> driverWithPoints = new LinkedList<>();
+
+        for (Driver driver: drivers) {
+            Long points = em.createNamedQuery("Result.allPoints", Long.class)
+                    .setParameter("ID", driver)
+                    .getSingleResult();
+            driverWithPoints.add(new String[]{driver.toString(), "" + points});
+        }
+
+        return driverWithPoints;
+    }
+----
