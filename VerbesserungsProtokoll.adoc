@@ -135,3 +135,11 @@ Annotation @NamedQueries vergessen
         )
 )
 ----
+
+=== ResultEndpoint.java
+Entitymanager hinzugefügt
+[source,java]
+----
+@PersistenceContext
+    EntityManager em;
+----

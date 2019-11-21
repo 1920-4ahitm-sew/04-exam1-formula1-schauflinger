@@ -5,6 +5,7 @@ import at.htl.formula1.entity.Driver;
 import javax.ejb.Stateless;
 import javax.json.Json;
 import javax.json.JsonObject;
+import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.ws.rs.*;
@@ -16,6 +17,8 @@ import java.util.List;
 @Path("Result")
 public class ResultsEndpoint {
 
+    @PersistenceContext
+    EntityManager em;
 
     /**
      * @param name als QueryParam einzulesen
