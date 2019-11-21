@@ -143,3 +143,35 @@ Entitymanager hinzugefügt
 @PersistenceContext
     EntityManager em;
 ----
+Client und Webtarget hinzugefügt
+[source,java]
+----
+public static final String url = "http://vm90.htl-leonding.ac.at/results";
+private Client client = ClientBuilder.newClient();
+private WebTarget target = client.target(url);
+----
+
+readResultsFromEndpoint
+[source,java]
+----
+Response response = this.target.request(MediaType.APPLICATION_JSON).get();
+JsonArray payload = response.readEntity(JsonArray.class);
+persistResult(payload);
+----
+
+persistResult
+[source,java]
+----
+        for(JsonValue jsonValue : resultsJson) {
+            Long raceNo = Long.parseLong("" + jsonValue.asJsonObject().getInt("raceNo"));
+            int position = jsonValue.asJsonObject().getInt("position");
+            String name = jsonValue.asJsonObject().getString("driverFullName");
+
+            em.persist(new Result(em.find(Race.class, raceNo),
+                    position,
+                    em.createNamedQuery("Driver.findByName", Driver.class)
+                            .setParameter("NAME", name)
+                            .getSingleResult()));
+
+        }
+----

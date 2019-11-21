@@ -9,6 +9,9 @@ import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.ws.rs.*;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
@@ -19,6 +22,11 @@ public class ResultsEndpoint {
 
     @PersistenceContext
     EntityManager em;
+
+    public static final String RESULTS_ENDPOINT = "http://vm90.htl-leonding.ac.at/results";
+
+    private Client client = ClientBuilder.newClient();
+    private WebTarget target = client.target(RESULTS_ENDPOINT);
 
     /**
      * @param name als QueryParam einzulesen

@@ -22,9 +22,9 @@ import javax.ws.rs.core.Response;
 public class ResultsRestClient {
 
 
-    public static final String RESULTS_ENDPOINT = "http://vm90.htl-leonding.ac.at/results";
-    private Client client;
-    private WebTarget target;
+    public static final String url = "http://vm90.htl-leonding.ac.at/results";
+    private Client client = ClientBuilder.newClient();
+    private WebTarget target = client.target(url);
 
     EntityManager em;
 
@@ -34,10 +34,7 @@ public class ResultsRestClient {
      */
     public void readResultsFromEndpoint() {
 
-        String url = "http://vm90.htl-leonding.ac.at/results";
-        Client client = ClientBuilder.newClient();
-        WebTarget target = client.target(url);
-        Response response = (Response) target.request(MediaType.APPLICATION_JSON);
+        Response response = this.target.request(MediaType.APPLICATION_JSON).get();
         JsonArray payload = response.readEntity(JsonArray.class);
         persistResult(payload);
     }
@@ -64,7 +61,15 @@ public class ResultsRestClient {
     @Transactional
     void persistResult(JsonArray resultsJson) {
         for (JsonValue jsonValue : resultsJson){
-            JsonObject resultJson = jsonValue.asJsonObject();
+            Long raceNo = Long.parseLong("" + jsonValue.asJsonObject().getInt("raceNo"));
+            int position = jsonValue.asJsonObject().getInt("position");
+            String name = jsonValue.asJsonObject().getString("driverFullName");
+
+            em.persist(new Result(em.find(Race.class, raceNo),
+                    position,
+                    em.createNamedQuery("Driver.findByName", Driver.class)
+                            .setParameter("NAME", name)
+                            .getSingleResult()));
         }
     }
 
